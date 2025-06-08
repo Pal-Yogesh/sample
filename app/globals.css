@@ -87,6 +87,7 @@ body {
   top: 0;
   left: 0;
   height: 100vh;
+  width: 260px;
   z-index: 1000;
   transform: translateX(-100%);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
@@ -94,6 +95,7 @@ body {
 
 .sidebar-mobile.open {
   transform: translateX(0);
+  display: flex;
 }
 
 .sidebar-overlay {
@@ -921,6 +923,13 @@ body {
     display: flex;
   }
 
+  .sidebar-mobile.open {
+    display: flex; /* Show when open */
+  }
+  .mobile-header {
+    display: flex;
+  }
+
   .main-content {
     width: 100%;
   }
@@ -1002,6 +1011,9 @@ body {
 
   .mobile-header {
     display: none;
+  }
+  .sidebar-overlay {
+    display: none; /* No overlay needed on desktop */
   }
 }
 

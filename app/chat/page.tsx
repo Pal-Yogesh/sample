@@ -259,19 +259,19 @@ export default function ChatPage() {
 
       <div className="main-content">
         <div className="mobile-header">
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
-          >
-            ☰
-          </button>
-          <div className="chatgpt-logo">
-            <div className="logo-icon">🤖</div>
-            ChatGPT
-          </div>
-          <div style={{ width: "32px" }} />
-        </div>
+  <button
+    className="mobile-menu-btn"
+    onClick={() => setSidebarOpen(true)}
+    aria-label="Open menu"
+  >
+    ☰
+  </button>
+  <div className="chatgpt-logo">
+    <div className="logo-icon">🤖</div>
+    ChatGPT
+  </div>
+  <div style={{ width: "32px" }} />
+</div>
 
         <div className="chat-messages">
           {messages.length === 0 && !isLoading && (

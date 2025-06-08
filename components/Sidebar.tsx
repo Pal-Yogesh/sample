@@ -1,18 +1,17 @@
-"use client"
+"use client";
 
-import { useUser } from "@auth0/nextjs-auth0"
-import { useEffect, useState } from "react"
-import { v4 as uuidv4 } from 'uuid'
-
+import { useUser } from "@auth0/nextjs-auth0";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface SidebarProps {
-  conversations: any[]
-  currentConversationId?: string
-  onSelectConversation: (id: string) => void
-  onDeleteConversation: (chat_id: string) => void
-  onNewConversation: () => void
-  isOpen: boolean
-  onClose: () => void
+  conversations: any[];
+  currentConversationId?: string;
+  onSelectConversation: (id: string) => void;
+  onDeleteConversation: (chat_id: string) => void;
+  onNewConversation: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function Sidebar({
@@ -25,9 +24,9 @@ export default function Sidebar({
   onClose,
 }: SidebarProps) {
   const { user } = useUser();
-    const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     // Check if window is defined (client-side)
     if (typeof window !== "undefined") {
       setIsMobile(window.innerWidth <= 768);
@@ -36,7 +35,11 @@ export default function Sidebar({
       return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
-
+useEffect(() => {
+  console.log("Sidebar isOpen:", isOpen);
+  console.log("Conversations:", conversations);
+  console.log("User:", user);
+}, [isOpen, conversations, user]);
   useEffect(() => {
     // Close sidebar when clicking outside on mobile
     const handleClickOutside = (e: MouseEvent) => {
@@ -54,41 +57,36 @@ export default function Sidebar({
 
   useEffect(() => {
     // Check if a currentConversationId exists in localStorage
-    const storedConversationId = localStorage.getItem('currentConversationId');
-
-    // If not, create a new one and set it
+    const storedConversationId = localStorage.getItem("currentConversationId");
     if (!storedConversationId) {
       const newConversationId = uuidv4();
-      localStorage.setItem('currentConversationId', newConversationId);
-      onNewConversation(); // Optionally trigger a new conversation
+      localStorage.setItem("currentConversationId", newConversationId);
+      onNewConversation();
     }
-  }, []);
+  }, [onNewConversation]);
 
   const handleNewChat = () => {
-    const newConversationId = uuidv4()
-    localStorage.setItem('currentConversationId', newConversationId)
-    onNewConversation()
-    onClose()
-  }
+    const newConversationId = uuidv4();
+    localStorage.setItem("currentConversationId", newConversationId);
+    onNewConversation();
+    if (isMobile) onClose();
+  };
 
   const handleSelectConversation = (id: string) => {
-    onSelectConversation(id)
-    onClose()
-  }
+    onSelectConversation(id);
+    if (isMobile) onClose();
+  };
 
   return (
     <>
-    {isMobile && isOpen && (
-        <div 
-          className="sidebar-overlay show"
-          onClick={onClose}
-        />
-      )}
-
-      <div 
-      className={`sidebar-overlay ${isOpen ? "show" : ""}`} onClick={onClose} />
       <div
-        className={`sidebar ${typeof window !== "undefined" && window.innerWidth <= 768 ? "sidebar-mobile" : ""} ${isOpen ? "open" : ""}`}
+        className={`sidebar-overlay ${isOpen ? "show" : ""}`}
+        onClick={onClose}
+      />
+      <div
+        className={`sidebar ${isMobile ? "sidebar-mobile" : ""} ${
+          isOpen ? "open" : ""
+        }`}
       >
         <div className="sidebar-header">
           <button className="new-chat-btn" onClick={handleNewChat}>
@@ -113,8 +111,10 @@ export default function Sidebar({
           ) : (
             conversations.map((conversation) => (
               <div
-                key={conversation.id}
-                className={`conversation-item`}
+                key={conversation.chat_id}
+                className={`conversation-item ${
+                  conversation.chat_id === currentConversationId ? "active" : ""
+                }`}
                 onClick={() => handleSelectConversation(conversation.chat_id)}
               >
                 <div className="conversation-title">{conversation.chat_id}</div>
@@ -122,8 +122,8 @@ export default function Sidebar({
                   <button
                     className="delete-btn"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      onDeleteConversation(conversation.chat_id)
+                      e.stopPropagation();
+                      onDeleteConversation(conversation.chat_id);
                     }}
                     title="Delete conversation"
                   >
@@ -137,17 +137,19 @@ export default function Sidebar({
 
         <div className="sidebar-footer">
           <div className="user-info">
-            <div className="user-avatar">{user?.name?.charAt(0).toUpperCase() || "U"}</div>
+            <div className="user-avatar">
+              {user?.name?.charAt(0).toUpperCase() || "U"}
+            </div>
             <div className="user-details">
               <div className="user-name">{user?.name || "User"}</div>
               <div className="user-email">{user?.email || "user@example.com"}</div>
             </div>
             <a href="/auth/logout" className="logout-btn" title="Sign out">
-              ↪ 
+              ↪
             </a>
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }
